@@ -1,4 +1,4 @@
-NAME		= BitcoinExchange
+NAME		= btc
 
 SRC 		= src
 BUILD_DIR 	= build
@@ -8,9 +8,10 @@ CXX			= c++
 CXXFLAGS	= -Wall -Wextra -Werror -g -std=c++17 $(INCLUDES) 
 
 SRCS_FILES 	= main.cpp \
-				BitcoinExchange.cpp
+				BitcoinExchange.cpp \
+				CSVReader.cpp
 
-CPP_FILES 	= $(addprefix $(SRC)/, $(SRCS_FILES))
+CPP_FILES  	= $(addprefix $(SRC)/, $(SRCS_FILES))
 OBJS		= $(CPP_FILES:%.cpp=$(BUILD_DIR)/%.o)
 BUILD_DIRS := $(sort $(dir $(OBJS)))
 
@@ -36,6 +37,6 @@ re: fclean all
 
 v: re
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes \
-  		--error-exitcode=1 ./$(NAME)
+	  	--error-exitcode=1 ./$(NAME)
 
 .PHONY: all clean fclean re
