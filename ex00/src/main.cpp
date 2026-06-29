@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 23:12:55 by ybutkov           #+#    #+#             */
-/*   Updated: 2026/06/29 21:40:33 by ybutkov          ###   ########.fr       */
+/*   Updated: 2026/06/29 22:47:54 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 #include <fstream>
 #include <iomanip>
 
-#include "Date.hpp"
 
 
 int main(int argc, char** argv)
