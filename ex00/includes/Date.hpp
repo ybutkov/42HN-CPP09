@@ -1,11 +1,7 @@
 #pragma once
 
 #include <string>
-#include <sstream>
-#include <iomanip>
 #include <ctime>
-#include <tuple>
-#include <stdexcept>
 
 
 class Date {
@@ -17,7 +13,7 @@ private:
     static constexpr const char* DATE_FORMAT = "%Y-%m-%d";
     static constexpr const char* DATE_FORMAT_PRINT = "%04d-%02d-%02d";
 
-    void _saveDateFromTM(std::tm& datetime);
+    void _saveDateFromTM(const std::tm& datetime);
 
 public:
     Date();

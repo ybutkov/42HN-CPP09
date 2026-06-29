@@ -1,5 +1,10 @@
 #include "Date.hpp"
 #include <ctime>
+#include <tuple>
+#include <iomanip>
+#include <sstream>
+#include <stdexcept>
+#include <cstdio>
 
 
 Date::Date()
@@ -11,8 +16,6 @@ Date::Date()
 
 Date::Date(const std::string& dateStr) : rawDate(dateStr)
 {
-    if (dateStr.size() != 10 || dateStr[4] != '-' || dateStr[7] != '-')
-        throw std::invalid_argument("Invalid date format");
     std::tm dt = {};
     std::istringstream ss(dateStr);
     ss >> std::get_time(&dt, this->DATE_FORMAT);
@@ -20,27 +23,21 @@ Date::Date(const std::string& dateStr) : rawDate(dateStr)
     if (ss.fail()) {
         throw std::invalid_argument("Invalid date format");
     }
-
     char remaining;
     if (ss >> remaining) {
         throw std::invalid_argument("Invalid date format: extra characters at the end");
     }
     
-    int beforeDay = dt.tm_mday;
-    int beforeMon = dt.tm_mon;
-    int beforeYear = dt.tm_year;
-
-    dt.tm_hour = 0;
-    dt.tm_min = 0;
-    dt.tm_sec = 0;
     dt.tm_isdst = -1;
-
-    if (std::mktime(&dt) == -1 ||
-        dt.tm_mday != beforeDay ||
-        dt.tm_mon != beforeMon ||
-        dt.tm_year != beforeYear) {
+    if (std::mktime(&dt) == -1)
         throw std::invalid_argument("Date does not exist");
-    }
+
+    char buf[11];
+    std::strftime(buf, sizeof(buf), "%Y-%m-%d", &dt);
+    
+    if (dateStr != buf)
+        throw std::invalid_argument("Date does not exist");
+
     this->_saveDateFromTM(dt);
 }
 
@@ -60,7 +57,7 @@ std::string Date::toString() const
     return std::string(buf);
 }
 
-void Date::_saveDateFromTM(std::tm& datetime)
+void Date::_saveDateFromTM(const std::tm& datetime)
 {
     this->year = datetime.tm_year + 1900;
     this->month = datetime.tm_mon + 1;
