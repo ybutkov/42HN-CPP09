@@ -8,8 +8,10 @@ CXX			= c++
 CXXFLAGS	= -Wall -Wextra -Werror -g -std=c++17 $(INCLUDES) 
 
 SRCS_FILES 	= main.cpp \
+				CSVReader.cpp \
 				BitcoinExchange.cpp \
-				CSVReader.cpp
+				Date.cpp
+
 
 CPP_FILES  	= $(addprefix $(SRC)/, $(SRCS_FILES))
 OBJS		= $(CPP_FILES:%.cpp=$(BUILD_DIR)/%.o)
@@ -37,6 +39,6 @@ re: fclean all
 
 v: re
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes \
-	  	--error-exitcode=1 ./$(NAME)
+	  	--error-exitcode=1 ./$(NAME) input.txt
 
 .PHONY: all clean fclean re
