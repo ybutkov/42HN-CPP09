@@ -8,10 +8,11 @@
 
 
 namespace {
-    void printValues(std::vector<int> v) {
+    void printValues(std::vector<int> v, std::string name) {
         int width = 4;
         std::cout << std::right; 
 
+        std::cout << std::setw(7) << name << ":";
         std::cout << std::setw(width) << v[0];
         for (std::size_t i = 1; i < v.size(); ++i) {
             std::cout << std::setw(width) << v[i];
@@ -30,145 +31,192 @@ namespace {
         std::cout << std::endl;
     }
 
-
+    bool checkSorting(std::vector<int>& arr, std::size_t size)
+    {
+        for (std::size_t i = 1; i < size; ++i)
+            if (arr[i]<arr[i-1]) return false;
+        return true;
+    }
 }
 
-void insertElem(std::vector<int>& where, std::vector<int>::iterator endIt, int elem)
+// iterator ??
+std::size_t PmergeMe::getJacobsthalNumber(std::size_t idx)
 {
-    // where.insert(where.begin(), endIt, elem);
-    auto it = std::lower_bound(where.begin(), endIt, elem);
+    for(std::size_t i = jacobsthal.size(); i <= idx; ++i)
+    {
+        if (i < 2)
+            jacobsthal.push_back(static_cast<int>(i));
+        else
+            jacobsthal.push_back(jacobsthal[i - 1] + 2 * jacobsthal[i - 2]);
+    }
+    return jacobsthal[idx];
+}
+
+std::size_t PmergeMe::getPrevJacobsthalNumber(std::size_t value)
+{
+    if (value == 0)
+        return getJacobsthalNumber(0);    
+    std::size_t idx = 1;
+    while (value >= getJacobsthalNumber(idx))
+        idx++;
+    return getJacobsthalNumber(idx - 1);
+}
+
+void PmergeMe::insertElem(std::vector<int>& where,
+    std::vector<int>::iterator endIt,
+    int elem,
+    std::vector<int>& value)
+{
+    auto it = std::lower_bound(where.begin(), endIt, elem,
+        [&value](int a, int b) { ++count_cmp; return value[a] < value[b]; });
+        // [&value](int a, int b) { return value[a] < value[b]; });
     where.insert(it, elem);
 }
 
-std::vector<int> fordJohnson(
+std::vector<int> PmergeMe::fordJohnson(
     std::vector<int>& value,
-     std::vector<int>& partner,
-     std::vector<int> current)
+    std::vector<int>& prev,
+    std::vector<int>& partner,
+    std::vector<int> current)
 {
     if (current.size() <= 1)
         return current;
 
-    printValues(value);
-    printValues(partner);
-    printValues(current);
-    std::cout << std::endl;
-
-    std::vector<int> tail;     // если нечётное число элементов
+    // printValues(value, "value");
+    // printValues(prev, "prev");
+    // printValues(partner, "partner");
+    // printValues(current, "curr");
+    // std::cout << std::endl;
 
     std::vector<int> level0;
     int lonely = -1;
 
     for (size_t i = 0; i + 1 < current.size(); i += 2) {
-        int a = current[i], b = current[i+1];
-        if (value[a] < value[b]) std::swap(a, b);
-
+        int a = current[i];
+        int b = current[i+1];
         int new_id = value.size();
-        value.push_back(value[a]);
-        partner.push_back(b);
         level0.push_back(new_id);
+        ++count_cmp;
+        if (value[a] < value[b])
+        {
+            value.push_back(value[b]);
+            prev.push_back(current[i+1]);
+            partner.push_back(a);
+        }
+        else 
+        {
+            value.push_back(value[a]);
+            prev.push_back(current[i]);
+            partner.push_back(b);
+        }
     }
     if (current.size() % 2 == 1)
         lonely = current.back();
-    //     level0.push_back(current.back());
-    // std::cout << lonely << std::endl;
     
-    printValues(value);
-    printValues(partner);
-    printValues(current);
-    printValues(level0);
-    for (int idx: level0)
-        std::cout << value[idx] << " ";
-    if (lonely != -1)
-        std::cout << "lonely=" << value[lonely];
-    std::cout << "\n-----------------------------------------------" <<std::endl;
+    // printValues(value, "value");
+    // printValues(prev, "prev");
+    // printValues(partner, "partner");
+    // printValues(current, "curr");
+    // printValues(level0, "level0");
+    // for (int idx: level0)
+    //     std::cout << "l_v=" << value[idx] << " ";
+    // if (lonely != -1)
+    //     std::cout << "lonely=" << value[lonely];
+    // std::cout << "\n------------ recursion into -------------------------" <<std::endl;
 
-    std::vector<int> mainChain = fordJohnson(value, partner, level0);
-
-    std::cout << "mainChain raw:";
-    printValues(mainChain);
+    std::vector<int> mainChain = fordJohnson(value, prev, partner, level0);
+    
+    // std::cout << "\n------------ recursion out -------------------------" <<std::endl;
+    // printValues(mainChain, "mainChain raw");
 
     std::vector<int> inserts;
     for (std::size_t i = 0; i < mainChain.size(); ++i)
     {
         int partnerIdx = partner[mainChain[i]];
-        // int v = partner[partnerIdx];
         inserts.push_back(partnerIdx);
-        // std::cout << mainChain[i] << " " <<  value[mainChain[i]] << " " << partnerIdx << " " << v << ", ";
-        std::cout << mainChain[i]<< "->" << partnerIdx << ", ";
+        int idx = mainChain[i];
+        mainChain[i] = prev[idx];
     }
-    std::cout << std::endl;
-    // std::cout << "lonely=" << lonely << "\n";
-    std::cout << "inserts:";
-    printValues(inserts);
+    // std::cout << std::endl;
+    // printValues(mainChain, "mainChain raw");
+    // std::cout << "mainChain org:";     printChain(value, mainChain);
+    // // std::cout << "lonely=" << lonely << "\n";
+    // printValues(inserts, "inserts      ");
+    // std::cout << "inserts   org:";
+    // printChain(value, inserts);
+
+    // if (lonely != -1)
+    //     insertElem(mainChain, mainChain.end(), lonely, value);
+    if (lonely != -1)
+        inserts.push_back(lonely);
     mainChain.insert(mainChain.begin(), inserts[0]);
 
-    for (std::size_t i = 1; i < inserts.size(); ++i)
+    // for (std::size_t idx = 1; idx < inserts.size(); ++idx)
+    // {
+    //     insertElem(mainChain, mainChain.begin() + 2 * idx, inserts[idx], value);
+    // }
+    
+    // int n = PmergeMe::getPrevJacobsthalNumber(inserts.size());
+    std::size_t jacobsthalNumberIdx = 2;
+    std::size_t prevJacob = PmergeMe::getJacobsthalNumber(jacobsthalNumberIdx);
+    // std::cout << "JacobsthalNumber=" << prevJacob << "\n";
+    std::size_t inserted = 1;
+    while (true)
     {
-        std::cout << i << " " << inserts[i] << " ";
-        // insertElem(mainChain, mainChain.end(), inserts[i]);
-         int loserId = inserts[i];
-        // ищем позицию через std::lower_bound по value[mainChain[i]] < value[loserId]
-        auto it = std::lower_bound(mainChain.begin(), mainChain.end(), loserId,
-            [&value](int a, int b) { return value[a] < value[b]; });
-        mainChain.insert(it, loserId);
+        if (prevJacob > inserts.size())
+            break;
+        std::size_t currJacob = PmergeMe::getJacobsthalNumber(++jacobsthalNumberIdx);
+        std::size_t upper = currJacob > inserts.size() ? inserts.size() : currJacob;
+        for(std::size_t i = upper; i > prevJacob; --i)
+        {
+            insertElem(mainChain, mainChain.begin() + (i + inserted - 1), inserts[i - 1], value);
+            inserted++;
+        }
+        prevJacob = currJacob;
     }
-    if (lonely != -1)
-        insertElem(mainChain, mainChain.end(), lonely);
+    // std::cout << "\n";
 
-    std::cout << "mainChain raw:";
-    printValues(mainChain);
-    std::cout << "mainChain org:";
-    printChain(value, mainChain);
+    // for (std::size_t idx = 1; idx < inserts.size(); ++idx)
+    // {
+    //     insertElem(mainChain, mainChain.begin() + 2 * idx, inserts[idx], value);
+    // }
 
-    std::cout << "===========================================" <<std::endl;
+
+    // if (lonely != -1)
+    //     insertElem(mainChain, mainChain.end(), lonely, value);
+
+    (void)printChain;
+    (void)printValues;
+    // printValues(mainChain, "mainChain raw");
+    // std::cout << "mainChain org:";     printChain(value, mainChain);
+    // std::cout << "+++++++++++++" <<std::endl;
+    // printValues(mainChain, "mainChain raw");
+    // std::cout << "mainChain org:";
+    // printChain(value, mainChain);
+    // std::cout << "===========================================" <<std::endl;
     return mainChain;
 }
 
-void fordJohnsonSort(std::vector<int>& input) {
-    std::vector<int> value = input;      // value[0..n-1] = исходные значения
-    std::vector<int> partner(input.size(), -1);
-    
-    std::vector<int> current(input.size());
-    for (size_t i = 0; i < input.size(); ++i)
-        current[i] = i;                   // изначально ID = индекс в исходном массиве
-    
-    fordJohnson(value, partner, current); // первый вызов — без ручного разбиения на пары
-}
-
-
-// "17 3 22 8 14 25 1 19 6 11 23 9 16 4 20 12 7 24 2 15 10 21 5 18 13"
 std::vector<int> PmergeMe::sort(std::vector<int> values)
 {
-    std::size_t n = 42;
+    std::size_t size = values.size();
+    std::vector<int> partner(values.size(), -1);
+    std::vector<int> prev(values.size(), -1);
+    
+    std::vector<int> current(values.size());
+    for (size_t i = 0; i < values.size(); ++i)
+        current[i] = i;
+    
+    count_cmp = 0;
+    std::vector<int> res = fordJohnson(values, prev, partner, current);
+    std::cout << "CMP count=" << count_cmp << std::endl;
+    // printValues(res, "res raw");
+    
+    for (int& elem: res)
+        elem = values[elem];
 
-    std::vector<int> table;
-    for (std::size_t i = 0; i < n; i++) {
-        table.push_back(i);
-    }
-    printValues(table);
-    std::cout << std::endl;
-
-    fordJohnsonSort(values);
-    // std::vector<int> partner(n, -1);
-    // std::vector<int> level;
-
-    // for (std::size_t i = 0; i+1 < n; i += 2) {
-    //    int a = i, b = i+1;
-    //     if (values[a] < values[b]) std::swap(a, b); // a = max, b = min
-    //     partner[a] = b;
-    //     level.push_back(a);
-    // }
-
-    // std::vector<int> table;
-    // for (std::size_t i = 0; i < n; i++) {
-    //     table.push_back(i);
-    // }
-
-    // printValues(table);
-    // std::cout << std::endl;
-    // printValues(partner);
-    // printValues(level);
-
-    std::vector<int> res;
+    // printValues(res, "res aft");
+    std::cout << "Result arr is " << (checkSorting(res, size) ? " sorted" : " not sorted") << std::endl;
+    
     return res;
 }

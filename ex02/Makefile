@@ -37,6 +37,6 @@ re: fclean all
 
 v: re
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes \
-	  	--error-exitcode=1 ./$(NAME) "1 2 * 2 / 2 + 5 * 6 - 1 3 * - 4 5 * * 8 /"
+	  	--error-exitcode=1 ./$(NAME) $$(shuf -i 1-100000 -n 3000 | tr '\n' ' ')
 
 .PHONY: all clean fclean re
