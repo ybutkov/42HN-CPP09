@@ -1,17 +1,13 @@
 #pragma once
 
 #include <vector>
+#include <deque>
+#include <cstddef>
 
 
 class PmergeMe
 {
-    private:
-
-        PmergeMe() = default;
-        PmergeMe(const PmergeMe& other) = default;
-        PmergeMe& operator=(const PmergeMe& other) = default;
-        ~PmergeMe() = default;
-    
+    public:
         struct Node
         {
             int value;
@@ -20,23 +16,33 @@ class PmergeMe
 
             Node(int v, int pr, int pa);
         };
+    private:
 
+        PmergeMe() = default;
+        PmergeMe(const PmergeMe& other) = default;
+        PmergeMe& operator=(const PmergeMe& other) = default;
+        ~PmergeMe() = default;
+    
+        static std::size_t getJacobsthalNumber(std::size_t idx);
         static inline std::vector<std::size_t> jacobsthal;
         static inline std::size_t count_cmp = 0;
+
+        template <template <typename...> class Container>
+        static Container<int> fordJohnson(Container<Node>& nodes, Container<int>& current);
         
-        static std::vector<int> fordJohnson(std::vector<Node>& nodes,
-                            std::vector<int>& current);
-        static void insertElem(std::vector<int>& where,
-                            std::vector<int>::iterator startIt,
-                           std::vector<int>::iterator endIt,
-                           int elem,
-                           std::vector<Node>& nodes);
+        template <typename T, typename N>
+        static void insertElem(T& where,
+                        typename T::iterator startIt,
+                        typename T::iterator endIt,
+                        int elem,
+                        N& nodes);
         
     public:
+        template <typename Tnode, typename Tint>
+        static Tint sort(const std::vector<int>& values);
 
-        static std::size_t getJacobsthalNumber(std::size_t idx);
-        static std::size_t getPrevJacobsthalNumber(std::size_t value);
-        static std::vector<int> sort(std::vector<int>);
         static std::size_t getCountComparing();
 
 };
+
+#include "PmergeMe.tpp"

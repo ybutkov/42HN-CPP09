@@ -5,11 +5,12 @@ BUILD_DIR 	= build
 
 INCLUDES 	= -Iincludes
 CXX			= c++
-CXXFLAGS	= -Wall -Wextra -Werror -O2 -std=c++17 $(INCLUDES) 
+CXXFLAGS	= -Wall -Wextra -Werror -O2 -std=c++17 $(INCLUDES) -MMD -MP
+DEPS        = $(OBJS:.o=.d)
 
-SRCS_FILES 	= main.cpp \
-				PmergeMe.cpp \
-				TimeProfiler.cpp
+SRCS_FILES 	= PmergeMe.cpp \
+				TimeProfiler.cpp \
+				main.cpp
 
 
 CPP_FILES  	= $(addprefix $(SRC)/, $(SRCS_FILES))
@@ -27,6 +28,8 @@ $(BUILD_DIRS):
 $(BUILD_DIR)/%.o : %.cpp
 	@mkdir -p $(dir $@)
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
+
+-include $(DEPS)
 
 clean:
 	rm -rf $(BUILD_DIR)

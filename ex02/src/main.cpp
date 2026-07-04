@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/01 21:11:34 by ybutkov           #+#    #+#             */
-/*   Updated: 2026/07/03 21:16:45 by ybutkov          ###   ########.fr       */
+/*   Updated: 2026/07/04 22:14:05 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 #include <string>
 #include <vector>
 #include <climits>
-#include <iomanip>
 
 
 namespace {
@@ -43,7 +42,7 @@ void printValues(const T& container, const std::string& name)
 		return ;
     std::cout << std::right; 
 
-    std::cout << std::setw(10) << name << ": ";
+    std::cout << name << ": ";
 	auto currIt = container.begin();
     std::cout << *currIt;
 	++currIt;
@@ -75,6 +74,28 @@ bool isSorted(Iterator first, Iterator last)
     return true;
 }
 
+template <typename Tnode, typename Tint>
+static void runBenchmark(const std::vector<int>& values,
+                         const char* name)
+{
+    TimeProfiler timeProfiler;
+
+    timeProfiler.start();
+	Tint res = PmergeMe::sort<Tnode, Tint>(values);
+    timeProfiler.stop();
+
+    printValues(res, "After");
+    std::cout << "Time to process a range of " << values.size()
+			<< " elements with " << name << " : "
+            << timeProfiler.getDurationInMicroseconds() << " us" << std::endl;
+
+    std::cout << "Result is "
+            << (isSorted(res.begin(), res.end()) ? "sorted" : "not sorted") << std::endl;
+    std::cout << "Comparisons count = "
+			<< PmergeMe::getCountComparing() 
+			<< std::endl;
+}
+
 }
 
 int main(int argc, char** argv)
@@ -85,8 +106,6 @@ int main(int argc, char** argv)
     }
 
 	std::vector<int> values;
-	TimeProfiler timeProfiler("pmerge");
-	
 	for (int i = 1; i < argc; ++i)
 	{
     	std::stringstream ss(argv[i]);
@@ -109,18 +128,10 @@ int main(int argc, char** argv)
     }
 
 	printValues(values, "Before");
-	
-	timeProfiler.start();
-	std::vector<int> res = PmergeMe::sort(values);
-	timeProfiler.stop();
+	std::cout << std::endl;
 
-	printValues(res, "After");
-	std::cout << "Time to process a range of " << values.size()
-          << " elements with std::vector : "
-          << timeProfiler.getDurationInMicroseconds() << " us" << std::endl;
+	runBenchmark<std::vector<PmergeMe::Node>, std::vector<int> >(values, "std::vector");
+	runBenchmark<std::deque<PmergeMe::Node>, std::deque<int> >(values, "std::deque");
 
-		  std::cout << "Result is " << (isSorted(res.begin(), res.end()) ? "sorted" : "not sorted") << std::endl;
-	std::cout << "Comparisons count = " << PmergeMe::getCountComparing() << std::endl;
-	
 	return 0;
 }

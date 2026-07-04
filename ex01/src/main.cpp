@@ -6,14 +6,13 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/29 22:46:07 by ybutkov           #+#    #+#             */
-/*   Updated: 2026/06/30 02:17:10 by ybutkov          ###   ########.fr       */
+/*   Updated: 2026/07/03 22:52:10 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "RPN.hpp"
 #include <iostream>
-#include <map>
 #include <string>
 
 

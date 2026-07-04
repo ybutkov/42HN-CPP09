@@ -3,7 +3,6 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
-#include <list>
 #include <cctype>
 
 
