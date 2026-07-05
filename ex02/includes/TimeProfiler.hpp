@@ -13,7 +13,7 @@ class TimeProfiler
 
 
     public:
-        TimeProfiler(const std::string& label="default"): label(label) {}
+        TimeProfiler(const std::string& label="default");
         TimeProfiler(const TimeProfiler& other) = default;
         TimeProfiler& operator=(const TimeProfiler& other) = default;
         ~TimeProfiler() = default;

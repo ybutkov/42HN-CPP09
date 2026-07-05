@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 23:12:55 by ybutkov           #+#    #+#             */
-/*   Updated: 2026/06/29 22:47:54 by ybutkov          ###   ########.fr       */
+/*   Updated: 2026/07/05 21:28:40 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,9 @@ int main(int argc, char** argv)
         return 1;
     }
 
+	std::string dataDBName = "data.csv";
 	try {
-    	CSVReader dbReader("data.csv", ",", true, {"date","exchange_rate"});
+    	CSVReader dbReader(dataDBName, ",", true, {"date","exchange_rate"});
     	if (!dbReader.isOpen()) {
     	    std::cerr << "Error: missing data.csv" << std::endl;
     	    return 1;

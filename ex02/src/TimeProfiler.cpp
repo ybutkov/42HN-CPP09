@@ -2,6 +2,8 @@
 #include <chrono>
 
 
+TimeProfiler::TimeProfiler(const std::string& label): label(label) {}
+
 void TimeProfiler::start()
 {
     this->startTime = std::chrono::steady_clock::now();

@@ -11,7 +11,6 @@ private:
     int day;
     std::string rawDate;
     static constexpr const char* DATE_FORMAT = "%Y-%m-%d";
-    static constexpr const char* DATE_FORMAT_PRINT = "%04d-%02d-%02d";
 
     void _saveDateFromTM(const std::tm& datetime);
 

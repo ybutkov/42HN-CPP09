@@ -8,14 +8,18 @@
 class PmergeMe
 {
     public:
-        struct Node
-        {
-            int value;
-            int prev;
-            int partner;
+    struct Node
+    {
+        int value = 0;
+        int prev = -1;
+        int partner = -1;
 
-            Node(int v, int pr, int pa);
-        };
+        Node() = default;
+        Node(int v, int pr, int pa);
+        Node(const Node& other) = default;
+        Node& operator=(const Node& other) = default;
+        ~Node() = default;
+    }; 
     private:
 
         PmergeMe() = default;

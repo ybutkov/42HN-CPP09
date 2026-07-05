@@ -58,8 +58,10 @@ double RPN::calcucate(const std::string& expressionStr)
         else if (this->isOperator(ch))
             this->doOperation(ch);
         else
-            throw std::runtime_error("Unkwoun character");
+            throw std::runtime_error("Unknown character");
     }
+    if (this->rpnStack.empty())
+        throw std::runtime_error("Empty expression");
     double res = this->rpnStack.top();
     this->rpnStack.pop();
     if (!this->rpnStack.empty())

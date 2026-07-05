@@ -4,7 +4,6 @@
 #include <iomanip>
 #include <sstream>
 #include <stdexcept>
-#include <cstdio>
 
 
 Date::Date()
@@ -50,11 +49,14 @@ bool Date::operator<(const Date& other) const
 
 std::string Date::toString() const
 {
-    char buf[11];
-    
-    std::snprintf(buf, sizeof(buf), this->DATE_FORMAT_PRINT, year, month, day);
-    
-    return std::string(buf);
+    std::ostringstream oss;
+
+    oss << std::setfill('0')
+        << std::setw(4) << year << '-'
+        << std::setw(2) << month << '-'
+        << std::setw(2) << day;
+
+    return oss.str();
 }
 
 void Date::_saveDateFromTM(const std::tm& datetime)

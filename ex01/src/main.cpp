@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/29 22:46:07 by ybutkov           #+#    #+#             */
-/*   Updated: 2026/07/03 22:52:10 by ybutkov          ###   ########.fr       */
+/*   Updated: 2026/07/05 21:58:07 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 	try {
 		res = rpn.calcucate(argv[1]);
 	} catch (const std::exception& ex) {
-		std::cerr << "Error" << std::endl;
+		std::cerr << "Error: " << ex.what() << std::endl;
 		return 1;
 	}
     std::cout << res << std::endl;
